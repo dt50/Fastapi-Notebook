@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, status, Body
+from fastapi import FastAPI, HTTPException, status
 
 import models
 import crud
@@ -7,7 +7,7 @@ import uvicorn
 app = FastAPI()
 
 
-@app.post('/create-user/', status_code=201, tags=['Creating'])
+@app.post('/create-user/', status_code=status.HTTP_201_CREATED, tags=['Creating'])
 async def create_user(payload: models.UserCreate):
     if payload.usr_password1 != payload.usr_password2:
         return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Password dont much!')
@@ -18,7 +18,7 @@ async def create_user(payload: models.UserCreate):
     return {'user': payload.usr_login}
 
 
-@app.post('/create-user-note/', status_code=201, tags=['Creating'])
+@app.post('/create-user-note/', status_code=status.HTTP_201_CREATED, tags=['Creating'])
 async def create_user_note(payload: models.NoteSchema):
     create_note = await crud.create_note(payload)
     if not create_note:

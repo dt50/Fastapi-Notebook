@@ -37,7 +37,6 @@ async def create_note(payload: models.NoteSchema):
     async with await asyncpg.create_pool(host='db', port='5432',
                                          database='note', user='fastapi_note', password='fastapi') as pool:
         async with pool.acquire() as conn:
-
             await conn.execute(
                 '''INSERT INTO Notes (id_users, title, description) VALUES ($1, $2, $3)''',
                 user_id[0].get('id'), payload.title, payload.description
@@ -67,7 +66,7 @@ async def change_user_note(payload: models.ChangeNoteSchema):
     for item in notes:
         if payload.id == item.get('id'):
             async with await asyncpg.create_pool(host='db', port='5432',
-                                         database='note', user='fastapi_note', password='fastapi') as pool:
+                                                 database='note', user='fastapi_note', password='fastapi') as pool:
                 async with pool.acquire() as conn:
                     await conn.execute(
                         '''UPDATE Notes SET (title, description) = ($1, $2)
@@ -77,7 +76,8 @@ async def change_user_note(payload: models.ChangeNoteSchema):
             return True
     return False
 
-async def delete_note(id, usr_login, usr_password):
+
+async def delete_user_note(id, usr_login, usr_password):
     user_id = await get_user_id(usr_login, usr_password)
     if not user_id:
         return False
@@ -85,7 +85,7 @@ async def delete_note(id, usr_login, usr_password):
     for item in notes:
         if id == item.get('id'):
             async with await asyncpg.create_pool(host='db', port='5432',
-                                         database='note', user='fastapi_note', password='fastapi') as pool:
+                                                 database='note', user='fastapi_note', password='fastapi') as pool:
                 async with pool.acquire() as conn:
                     await conn.execute(
                         '''DELETE FROM Notes WHERE id = $1 AND id_users = $2''',
