@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, status
+import re
 
 from app.models import models
 from app.api.db.crud import notes
@@ -18,8 +19,12 @@ async def startup_event():
 @app.post('/create-user/', status_code=status.HTTP_201_CREATED, tags=['Creating'])
 async def create_user(payload: models.UserCreate):
     if payload.usr_password1 != payload.usr_password2:
-        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Password dont much!')
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Passwords are not identical')
+
     user_info = await users.create_user(payload)
+
+    if not re.match(r'[A-Za-z0-9@#$%^&+=]{8,}', payload.usr_password1):
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Password too easy')
 
     if not user_info:
         return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Users with this login already exists')
@@ -46,7 +51,7 @@ async def get_user_notes(usr_login: str, usr_password: str):
 async def change_note(payload: models.ChangeNoteSchema):
     response = await notes.change_user_note(payload)
     if not response:
-        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Note or User doesnt match in system!')
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Note or User doesnt match in system')
     return {'note_id': payload.id, 'note_title':payload.title, 'note_description': payload.description}
 
 
@@ -54,7 +59,7 @@ async def change_note(payload: models.ChangeNoteSchema):
 async def delete_note(id: int, usr_login: str, usr_password: str):
     response = await notes.delete_user_note(id, usr_login, usr_password)
     if not response:
-        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Note or User doesnt match in system!')
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Note or User doesnt match in system')
     return {'response': response}
 
 
