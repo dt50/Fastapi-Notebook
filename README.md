@@ -7,7 +7,7 @@ Build the images and run the containers:
 $ docker-compose up -d --build
 ```
 
-##Api URLS:
+## Api URLS:
 
 * [http://localhost:8000/docs](http://localhost:8000/docs) - Api docs
 * [http://localhost:8000/create-user](http://localhost:8000/create-user) - Create a user account
@@ -16,13 +16,13 @@ $ docker-compose up -d --build
 * [http://localhost:8000/change-note/{id}](http://localhost:8000/change-note/{id}) - Change user note by id
 * [http://localhost:8000/delete-note/{id}](http://localhost:8000/delete-note/{id}) - Delete user note by id 
 
-##What's Included?
+## What's Included?
 * [PostgreSQL](http://www.postgresql.org/)
 * [pgcrypto](https://www.postgresql.org/docs/8.3/pgcrypto.html)
 * [FastAPI](https://github.com/tiangolo/fastapi)
 * [asyncpg](https://github.com/MagicStack/asyncpg)
 
-##Guide
+## Guide
 
 1. 
     First you need to create a user account.
