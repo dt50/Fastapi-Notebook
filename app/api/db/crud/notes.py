@@ -1,32 +1,6 @@
 import asyncpg
-import models
-
-
-async def create_user(payload: models.UserCreate):
-    async with await asyncpg.create_pool(host='db', port='5432',
-                                         database='note', user='fastapi_note', password='fastapi') as pool:
-        async with pool.acquire() as conn:
-            try:
-                await conn.execute(
-                    '''INSERT INTO Users (login, password) VALUES ($1, crypt($2, gen_salt('bf', 8)))''',
-                    payload.usr_login, payload.usr_password1
-                )
-            except asyncpg.exceptions.UniqueViolationError:
-                return False
-    return True
-
-
-async def get_user_id(user_login, user_password):
-    async with await asyncpg.create_pool(host='db', port='5432',
-                                         database='note', user='fastapi_note', password='fastapi') as pool:
-        async with pool.acquire() as conn:
-            res = await conn.fetch(
-                '''SELECT id FROM Users WHERE login = $1 and password = crypt($2, password)''',
-                user_login, user_password
-            )
-            if not res:
-                return False
-    return res
+import app.models.models as models
+from app.api.db.crud.users import get_user_id
 
 
 async def create_note(payload: models.NoteSchema):
@@ -66,7 +40,7 @@ async def change_user_note(payload: models.ChangeNoteSchema):
     for item in notes:
         if payload.id == item.get('id'):
             async with await asyncpg.create_pool(host='db', port='5432',
-                                                 database='note', user='fastapi_note', password='fastapi') as pool:
+                                         database='note', user='fastapi_note', password='fastapi') as pool:
                 async with pool.acquire() as conn:
                     await conn.execute(
                         '''UPDATE Notes SET (title, description) = ($1, $2)
@@ -85,7 +59,7 @@ async def delete_user_note(id, usr_login, usr_password):
     for item in notes:
         if id == item.get('id'):
             async with await asyncpg.create_pool(host='db', port='5432',
-                                                 database='note', user='fastapi_note', password='fastapi') as pool:
+                                         database='note', user='fastapi_note', password='fastapi') as pool:
                 async with pool.acquire() as conn:
                     await conn.execute(
                         '''DELETE FROM Notes WHERE id = $1 AND id_users = $2''',

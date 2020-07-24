@@ -5,13 +5,11 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./api/:/home/api/
+      - ./app/:/home/app/
     depends_on:
       - db
   db:
     image: postgres:10
     env_file: .env
-    volumes:
-    - ./extension.sql:/docker-entrypoint-initdb.d/init.sql
     expose:
       - 5432
