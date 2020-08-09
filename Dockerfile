@@ -1,21 +1,18 @@
-FROM alpine:3.7
+FROM python:3.8-alpine
 
 ADD ./app /home/app/
 WORKDIR /home/app/
 ADD ./requirements.txt requirements.txt
 
+
 ENV PYTHONPATH=${PYTHONPATH:-../}
 
-RUN apk add --no-cache make postgresql-dev gcc python3 python3-dev musl-dev tree && \
-    python3 -m ensurepip && \
-    rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --upgrade pip setuptools && \
-    rm -r /root/.cache && \
-    pip3 install -r ./requirements.txt
+RUN apk add --no-cache make postgresql-dev gcc musl-dev tree
 
-RUN pwd && ls && tree
-RUN cd $PYTHONPATH && pwd && tree
+RUN pip install --upgrade pip setuptools && \
+    pip install -r ./requirements.txt
+
 
 EXPOSE 8000
 
-ENTRYPOINT ["python3", "api/db/schemas/main.py"]
+ENTRYPOINT ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
